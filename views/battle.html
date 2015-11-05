@@ -1,0 +1,47 @@
+<div class="layout-wrap layout-row masterGrid">
+    <div class="flex-15 gridSpot {{grid.side}}" ng-repeat ='grid in grids' >    
+        <md-button ng-show="grid.canclick" ng-click="moveCharacter(grid)" aria-label="{{grid.side}}"></md-button> 
+    </div>
+</div>
+<div class="layout-wrap layout-row">
+     <div class="flex-15 bottomGrid" ng-repeat ='grid in gridBottomRange() track by $index'>    
+         
+    </div>
+</div> 
+
+<div class="layout-wrap layout-row actionbar">
+    <div class="flex-45 "> 
+        <div class="basehealth"></div>
+        <div class="healthbar"> 100/100</div>
+    </div>
+    <div class="flex-20"> 
+   
+        <div class="radial-progress">
+            <div class="circle">
+                <div class="mask full" ng-style="getFillStyle()">
+                    <div class="fill" ng-style="getFillStyle()"></div>
+                </div>
+                <div class="mask half">
+                    <div class="fill" ng-style="getFillStyle()"></div>
+                    <div class="fill fix" ng-style="getCircleFillStyle()"></div>
+                </div>
+                <div class="shadow"></div>
+            </div>
+            <md-button class="inset {{meterText}}" ng-click="openItemSelector()">{{meterText}}</md-button> 
+        </div>
+          
+       
+        </div>  
+    
+
+    <div class="flex-35"> 
+     <div class="item" ng-style="setupItemStyle(item)"  ng-repeat="item in items"> </div>
+        </div>
+</div>
+
+
+<div class="character" ng-style="getCurrentPosistion()">
+
+
+</div>
+

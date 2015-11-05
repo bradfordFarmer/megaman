@@ -1,0 +1,30 @@
+<md-dialog>
+    <md-toolbar class="md-default-theme">
+    <div class="md-toolbar-tools">
+      <h2>Rotine Selection</h2>
+      <span class="flex"></span>
+    </div>
+  </md-toolbar>
+    <md-dialog-content style="width:600px;max-height:810px;" class="layout-row">
+        <div class="flex-70">
+            <div>
+                <div class="cardDisplay">
+                 <div> {{currentRoutine.name}}</div> 
+                   <div> <img src="{{currentRoutine.image}}"></div>
+                  <div> {{currentRoutine.description}}</div> 
+                </div>
+            </div>
+            <div class="layout-row"> 
+                <div class="flex-20" ng-repeat="routine in routines" >
+                   <div  x-lvl-draggable="true" class="routineSmall" ng-click="setCurrentRoutine(routine)" x-on-drag ="setCurrentRoutine(routine)">{{routine.name}} </div> 
+                </div>
+            </div>
+        </div>
+        <div class="flex-30"> 
+            <div ng-repeat="r in loadedRoutines" x-lvl-drop-target="true" x-on-drop="dropped($index)" class="dropzones"> </div>
+            <md-button ng-click="executeRoutines()" class="md-primary">
+                Execute
+            </md-button>
+        </div>
+    </md-dialog-content>
+</md-dialog>
