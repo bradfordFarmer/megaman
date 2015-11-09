@@ -1,11 +1,14 @@
 #  cfcoptions : { "out": "../js/"   }
 
+
+
+
 netBattler = ($location,$scope,$interval, $mdDialog , uuid)->
     vm=$scope
     vm.grids= []
     side ='ally'
     canclick =true
-    currentGridY= 2;
+    currentGridY= 1;
     currentGridX= 0;
     gridX=0
     gridY=0
@@ -35,7 +38,7 @@ netBattler = ($location,$scope,$interval, $mdDialog , uuid)->
                     currentGridY= grid.Y
                     currentGridX = grid.X
     vm.getCurrentPosistion =  ()->
-        topPos = 14+6*currentGridY
+        topPos = 18+6*currentGridY
         leftPos =  5+15*currentGridX
         return { top:topPos+'%', left : leftPos+'%'}
     
@@ -58,6 +61,7 @@ netBattler = ($location,$scope,$interval, $mdDialog , uuid)->
     
     
     vm.setupItemStyle =(item)->
+    
     gameIncrement =  Math.floor(.08 * 180)
     vm.selectItem = ()->
     rotationlock = 0
@@ -71,7 +75,7 @@ netBattler = ($location,$scope,$interval, $mdDialog , uuid)->
     
     updatemeter = ()->
         if rotation < 180 and rotationlock is 0
-            rotation +=gameIncrement
+            rotation+=gameIncrement
             if rotation > 180
                 rotation = 180
             fill_rotation = rotation;
@@ -79,15 +83,76 @@ netBattler = ($location,$scope,$interval, $mdDialog , uuid)->
             if rotation is 180 
                 rotationlock= 1
                 activateMeter()
-        
-        
+    
     gameLoop = $interval(updatemeter, 1000);
     vm.loadedRoutines = [{empty:true},{empty:true},{empty:true}];
-    uuid1 =uuid.new()
-    uuid2 =uuid.new()
-    vm.routines=[{name:'sword', image:"image1", description:"it cuts things" , uuid:uuid1},{ name:'gun', image:"image1", description:"it shoots things",uuid:uuid2}] 
+    vm.routines=[{name:'sword', image:"image1", smallimage: "image2" , description:"it cuts things" , uuid:uuid.new(), empty:false},{ name:'gun', image:"image1", smallimage: "image2" , description:"it shoots things",uuid:uuid.new(), empty:false},{ name:'bomb', image:"image1", smallimage: "image2" , description:"it makes things go boom!",uuid:uuid.new(), empty:false} ] 
     vm.setCurrentRoutine=(routine)->
         vm.currentRoutine= routine
+    
+    ### Weapon ###
+    mainweapon = { name:'gun', image:"image1", smallimage: "image2", description:"it shoots things",uuid:uuid.new(), empty:false}
+    wepRotation = Math.floor(0 * 180);
+    weapon_rotation = wepRotation;
+    fixedWeapon_rotation = wepRotation * 2;
+    chargeIncrement =   Math.floor(.3 * 180)
+    weaponInterval = {}
+    wepLock=0
+    vm.startWeapon = ()-> 
+        wepLock =0
+        weaponInterval = $interval(chargeWeapon, 1000);
+    currentAttack= {}
+    
+    startWeaponLoop = (wep, charge)->
+    
+    moveCurrentAttack= ()->
+    
+    vm.fireWeapon=()->
+        $interval.cancel weaponInterval
+        wepLock=1;
+        updateWepRotain wepRotation
+        
+        ## fire a weapon here ##
+        if loadedRoutine[0].empty 
+            startWeaponLoop(wep,wepRotation)
+        else
+            startWeaponLoop(loadedRoutine[0],wepRotation)
+            loadedRoutine.splice(0,1)
+            loadedRoutine.push {empty:true}
+        wepRotation =0
+
+    updateWepRotain =(rot)->
+        weapon_rotation = rot;
+        fixedWeapon_rotation = rot * 2;
+
+    chargeWeapon=()->
+        if wepRotation < 180 
+            wepRotation +=chargeIncrement
+            if wepRotation > 180
+                wepRotation = 180
+            if wepLock 
+                wepRotation=0
+            updateWepRotain wepRotation
+            
+    getCurrentWeaponImage=()->
+        if loadedRoutine[0].empty
+            return mainweapon.smallImage
+        else 
+            return loadedRoutine[0].smallImage
+            
+    vm.getWeaponFillStyle= ()->
+        return  { 
+            "-webkit-transform" : 'rotate(' + weapon_rotation + 'deg)', 
+            "-ms-transform" : 'rotate(' + weapon_rotation + 'deg)', 
+            transform: 'rotate(' + weapon_rotation + 'deg)'
+        }  
+    vm.getWeaponCircleFillStyle =()->
+        return  { 
+            "-webkit-transform" : 'rotate(' + fixedWeapon_rotation + 'deg)', 
+            "-ms-transform" : 'rotate(' + fixedWeapon_rotation + 'deg)', 
+            transform: 'rotate(' + fixedWeapon_rotation + 'deg)'
+        }  
+    
     
     ### Game items ###
     
@@ -104,8 +169,10 @@ netBattler = ($location,$scope,$interval, $mdDialog , uuid)->
         removeRoutine vm.currentRoutine
         vm.currentRoutine= ''
     
+      
+    
     vm.executeRoutines = () ->
-         vm.meterText ='Charging'
+         vm.meterText ='Loading'
          rotationlock = 0
          rotation = -gameIncrement
          $mdDialog

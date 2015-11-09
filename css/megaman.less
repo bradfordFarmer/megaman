@@ -2,13 +2,13 @@
 @rotation: rotateX(65deg) rotateY(0deg) rotateZ(0deg);
 @center :  center 55%;
 @shadow:  -2px -8px 28px -8px rgba(0,0,0,0.75);
-@animation-duration : 10s;
+@animation-duration: 10s;
 @generalDropShadow: 0 4px 4px rgba(0, 0, 0, 0.3);
 
 .bottomGrid{
   height:25px;
   position: relative;
-  top: -97px;
+  top: -148px;
   background-color: #cc0e31;
   border-bottom-left-radius: 30%;
   border-bottom-right-radius: 30%;
@@ -56,7 +56,6 @@
     background-color: white;
     color:#cc0e31;
     .boxShadow(@generalDropShadow);
-    
 }
 
 .radial-progress {
@@ -143,7 +142,6 @@
     height: 40px;
     top: 16px;
     .boxShadow(@generalDropShadow);
-    
 }
 .healthbar{
     background-color: green;
@@ -153,7 +151,6 @@
     top: -24px;
     position: relative;
     z-index:2;
-    
 }
 .character{
     border-radius: 50%;
@@ -183,19 +180,18 @@
 }
 
 .actionbar{
-    
     height: 75px;
     width:90%;
     position: relative;
-    top: -90px;
-    
+    top: -125px;   
 }
 
 .masterGrid{
     -ms-transform: @rotation;
     -webkit-transform: @rotation;
     transform: @rotation;
-
+    position: relative;
+    top: -50px;
     -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
     -ms-transform-origin: @center;
@@ -207,9 +203,11 @@
     height:30%; 
     background-color: bisque;
 }
+
 .routineSmall{
     height: 8%;
-} 
+}
+
 .dropzones{
     width:60%;
     margin-left: 20%;
@@ -218,6 +216,7 @@
     background-color: darkgrey;
     border:3px solid black;
 }
+
 [draggable] {
     -moz-user-select: none;
     -khtml-user-select: none;

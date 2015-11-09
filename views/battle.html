@@ -1,3 +1,10 @@
+
+<div class="layout-wrap layout-row">
+    <div class="flex-45"> 
+            <div class="basehealth"></div>
+            <div class="healthbar"> 100/100</div>
+    </div>
+</div>
 <div class="layout-wrap layout-row masterGrid">
     <div class="flex-15 gridSpot {{grid.side}}" ng-repeat ='grid in grids' >    
         <md-button ng-show="grid.canclick" ng-click="moveCharacter(grid)" aria-label="{{grid.side}}"></md-button> 
@@ -10,12 +17,7 @@
 </div> 
 
 <div class="layout-wrap layout-row actionbar">
-    <div class="flex-45 "> 
-        <div class="basehealth"></div>
-        <div class="healthbar"> 100/100</div>
-    </div>
-    <div class="flex-20"> 
-   
+    <div class="flex-15">
         <div class="radial-progress">
             <div class="circle">
                 <div class="mask full" ng-style="getFillStyle()">
@@ -28,20 +30,38 @@
                 <div class="shadow"></div>
             </div>
             <md-button class="inset {{meterText}}" ng-click="openItemSelector()">{{meterText}}</md-button> 
-        </div>
-          
-       
-        </div>  
-    
-
+        </div>   
+    </div>  
+    <div class="flex"> </div>
     <div class="flex-35"> 
-     <div class="item" ng-style="setupItemStyle(item)"  ng-repeat="item in items"> </div>
+        <div class="item" ng-repeat="routine in loadedRoutines | filter: {empty :false}">
+            <img ng-src="{{routine.imagesmall}}" class="smallRoutineOnBar">
         </div>
+    </div>    
+    <div class="flex-20"> 
+        <div class="radial-progress">
+            <div class="circle">
+                <div class="mask full" ng-style="getWeaponFillStyle()">
+                    <div class="fill" ng-style="getWeaponFillStyle()"></div>
+                </div>
+                <div class="mask half">
+                    <div class="fill" ng-style="getWeaponFillStyle()"></div>
+                    <div class="fill fix" ng-style="getWeaponCircleFillStyle()"></div>
+                </div>
+                <div class="shadow"></div>
+            </div>
+            <md-button class="inset" ng-mousedown="startWeapon()"  ng-mouseup="fireWeapon()">
+                <img ng-src="getCurrentWeaponImage()">
+            </md-button> 
+        </div>   
+    </div>  
 </div>
-
 
 <div class="character" ng-style="getCurrentPosistion()">
-
-
 </div>
 
+<div class="enemies" ng-repeat="enemy in enemies" ng-style="getCurrentEnemeyStyle(enemy)">
+</div>
+
+<div class="attack" ng-repeat="attack in attacks" ng-style="getCurrentAttackStyle(attacks)">
+</div>

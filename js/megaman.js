@@ -2,12 +2,12 @@
   var config, demo, netBattler;
 
   netBattler = function($location, $scope, $interval, $mdDialog, uuid) {
-    var activateMeter, canUseMeter, canclick, currentGridX, currentGridY, fill_rotation, fix_rotation, gameIncrement, gameLoop, gridX, gridY, num, removeRoutine, rotation, rotationlock, side, updatemeter, uuid1, uuid2, vm, _i;
+    var activateMeter, canUseMeter, canclick, chargeIncrement, chargeWeapon, currentGridX, currentGridY, fill_rotation, fix_rotation, fixedWeapon_rotation, gameIncrement, gameLoop, gridX, gridY, num, removeRoutine, rotation, rotationlock, side, updateWepRotain, updatemeter, uuid1, uuid2, vm, weaponInterval, weapon_rotation, wepLock, wepRotation, _i;
     vm = $scope;
     vm.grids = [];
     side = 'ally';
     canclick = true;
-    currentGridY = 2;
+    currentGridY = 1;
     currentGridX = 0;
     gridX = 0;
     gridY = 0;
@@ -55,7 +55,7 @@
     };
     vm.getCurrentPosistion = function() {
       var leftPos, topPos;
-      topPos = 14 + 6 * currentGridY;
+      topPos = 18 + 6 * currentGridY;
       leftPos = 5 + 15 * currentGridX;
       return {
         top: topPos + '%',
@@ -133,6 +133,54 @@
       return vm.currentRoutine = routine;
     };
 
+    /* Weapon */
+    wepRotation = Math.floor(0 * 180);
+    weapon_rotation = wepRotation;
+    fixedWeapon_rotation = wepRotation * 2;
+    chargeIncrement = Math.floor(.3 * 180);
+    weaponInterval = {};
+    wepLock = 0;
+    vm.startWeapon = function() {
+      wepLock = 0;
+      return weaponInterval = $interval(chargeWeapon, 1000);
+    };
+    vm.fireWeapon = function() {
+      $interval.cancel(weaponInterval);
+      wepRotation = 0;
+      wepLock = 1;
+      return updateWepRotain(wepRotation);
+    };
+    updateWepRotain = function(rot) {
+      weapon_rotation = rot;
+      return fixedWeapon_rotation = rot * 2;
+    };
+    chargeWeapon = function() {
+      if (wepRotation < 180) {
+        wepRotation += chargeIncrement;
+        if (wepRotation > 180) {
+          wepRotation = 180;
+        }
+        if (wepLock) {
+          wepRotation = 0;
+        }
+        return updateWepRotain(wepRotation);
+      }
+    };
+    vm.getWeaponFillStyle = function() {
+      return {
+        "-webkit-transform": 'rotate(' + weapon_rotation + 'deg)',
+        "-ms-transform": 'rotate(' + weapon_rotation + 'deg)',
+        transform: 'rotate(' + weapon_rotation + 'deg)'
+      };
+    };
+    vm.getWeaponCircleFillStyle = function() {
+      return {
+        "-webkit-transform": 'rotate(' + fixedWeapon_rotation + 'deg)',
+        "-ms-transform": 'rotate(' + fixedWeapon_rotation + 'deg)',
+        transform: 'rotate(' + fixedWeapon_rotation + 'deg)'
+      };
+    };
+
     /* Game items */
     removeRoutine = function(routine) {
       var aroutine, found, index, _j, _len, _ref;
@@ -154,7 +202,7 @@
       return vm.currentRoutine = '';
     };
     vm.executeRoutines = function() {
-      vm.meterText = 'Charging';
+      vm.meterText = 'Loading';
       rotationlock = 0;
       rotation = -gameIncrement;
       return $mdDialog.hide();
