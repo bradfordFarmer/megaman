@@ -1,7 +1,7 @@
 <md-dialog>
     <md-toolbar class="md-default-theme">
     <div class="md-toolbar-tools">
-      <h2>Rotine Selection</h2>
+      <h2>Routine Selection</h2>
       <span class="flex"></span>
     </div>
   </md-toolbar>
@@ -21,7 +21,9 @@
             </div>
         </div>
         <div class="flex-30"> 
-            <div ng-repeat="r in loadedRoutines" x-lvl-drop-target="true" x-on-drop="dropped($index)" class="dropzones"> </div>
+            <div ng-repeat="routine in loadedRoutines" x-lvl-drop-target="true" x-on-drop="dropped($index)" class="dropzones">
+                <div ng-if="routine.name"> {{routine.name}}</div>
+            </div>
             <md-button ng-click="executeRoutines()" class="md-primary">
                 Execute
             </md-button>

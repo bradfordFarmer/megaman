@@ -1,8 +1,4 @@
 #  cfcoptions : { "out": "../js/"   }
-
-
-
-
 netBattler = ($location,$scope,$interval, $mdDialog , uuid)->
     vm=$scope
     vm.grids= []
@@ -85,13 +81,13 @@ netBattler = ($location,$scope,$interval, $mdDialog , uuid)->
                 activateMeter()
     
     gameLoop = $interval(updatemeter, 1000);
-    vm.loadedRoutines = [{empty:true},{empty:true},{empty:true}];
-    vm.routines=[{name:'sword', image:"image1", smallimage: "image2" , description:"it cuts things" , uuid:uuid.new(), empty:false},{ name:'gun', image:"image1", smallimage: "image2" , description:"it shoots things",uuid:uuid.new(), empty:false},{ name:'bomb', image:"image1", smallimage: "image2" , description:"it makes things go boom!",uuid:uuid.new(), empty:false} ] 
+    vm.loadedRoutines = [{empty:true},{empty:true},{empty:true}]; 
+    vm.routines=[{name:'sword', image:"image1", smallImage: "image2" , description:"it cuts things" , uuid:uuid.new(), empty:false},{ name:'gun', image:"image1", smallImage: "image2" , description:"it shoots things",uuid:uuid.new(), empty:false},{ name:'bomb', image:"image1", smallImage: "image2" , description:"it makes things go boom!",uuid:uuid.new(), empty:false} ] 
     vm.setCurrentRoutine=(routine)->
         vm.currentRoutine= routine
     
     ### Weapon ###
-    mainweapon = { name:'gun', image:"image1", smallimage: "image2", description:"it shoots things",uuid:uuid.new(), empty:false}
+    vm.mainweapon = { name:'gun', image:"image1", smallImage: "image2", description:"it shoots things",uuid:uuid.new(), empty:false}
     wepRotation = Math.floor(0 * 180);
     weapon_rotation = wepRotation;
     fixedWeapon_rotation = wepRotation * 2;
@@ -111,14 +107,15 @@ netBattler = ($location,$scope,$interval, $mdDialog , uuid)->
         $interval.cancel weaponInterval
         wepLock=1;
         updateWepRotain wepRotation
-        
+        lastItem = vm.loadedRoutines.length -1
         ## fire a weapon here ##
-        if loadedRoutine[0].empty 
-            startWeaponLoop(wep,wepRotation)
+        if vm.loadedRoutines[lastItem].empty 
+            startWeaponLoop(vm.mainweapon,wepRotation)
         else
-            startWeaponLoop(loadedRoutine[0],wepRotation)
-            loadedRoutine.splice(0,1)
-            loadedRoutine.push {empty:true}
+            
+            startWeaponLoop(vm.loadedRoutines[lastItem],wepRotation)
+            vm.loadedRoutines.splice(0,lastItem)
+            vm.loadedRoutines.splice(0,0, {empty:true})
         wepRotation =0
 
     updateWepRotain =(rot)->
@@ -134,11 +131,12 @@ netBattler = ($location,$scope,$interval, $mdDialog , uuid)->
                 wepRotation=0
             updateWepRotain wepRotation
             
-    getCurrentWeaponImage=()->
-        if loadedRoutine[0].empty
-            return mainweapon.smallImage
+    vm.getCurrentWeaponImage=()->
+        routineLength =vm.loadedRoutines.length-1
+        if vm.loadedRoutines[routineLength].empty
+            return vm.mainweapon.smallImage
         else 
-            return loadedRoutine[0].smallImage
+            return vm.loadedRoutines[routineLength].smallImage
             
     vm.getWeaponFillStyle= ()->
         return  { 
@@ -179,11 +177,11 @@ netBattler = ($location,$scope,$interval, $mdDialog , uuid)->
             .hide()
     vm.openItemSelector = ()->
         if rotationlock is 1      
-            vm.loadedRoutines= []
+            vm.loadedRoutines=  [{empty:true},{empty:true},{empty:true}];
             alert =  {
                 title: 'Attention',
                 templateUrl: 'views/cardSelection.html',
-                scope: $scope, 
+                scope: vm, 
                 preserveScope: true,
                 ok: 'submit'
               }

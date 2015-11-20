@@ -2,7 +2,7 @@
   var config, demo, netBattler;
 
   netBattler = function($location, $scope, $interval, $mdDialog, uuid) {
-    var activateMeter, canUseMeter, canclick, chargeIncrement, chargeWeapon, currentGridX, currentGridY, fill_rotation, fix_rotation, fixedWeapon_rotation, gameIncrement, gameLoop, gridX, gridY, num, removeRoutine, rotation, rotationlock, side, updateWepRotain, updatemeter, uuid1, uuid2, vm, weaponInterval, weapon_rotation, wepLock, wepRotation, _i;
+    var activateMeter, canUseMeter, canclick, chargeIncrement, chargeWeapon, currentAttack, currentGridX, currentGridY, fill_rotation, fix_rotation, fixedWeapon_rotation, gameIncrement, gameLoop, gridX, gridY, moveCurrentAttack, num, removeRoutine, rotation, rotationlock, side, startWeaponLoop, updateWepRotain, updatemeter, vm, weaponInterval, weapon_rotation, wepLock, wepRotation, _i;
     vm = $scope;
     vm.grids = [];
     side = 'ally';
@@ -114,19 +114,28 @@
         empty: true
       }
     ];
-    uuid1 = uuid["new"]();
-    uuid2 = uuid["new"]();
     vm.routines = [
       {
         name: 'sword',
         image: "image1",
+        smallImage: "image2",
         description: "it cuts things",
-        uuid: uuid1
+        uuid: uuid["new"](),
+        empty: false
       }, {
         name: 'gun',
         image: "image1",
+        smallImage: "image2",
         description: "it shoots things",
-        uuid: uuid2
+        uuid: uuid["new"](),
+        empty: false
+      }, {
+        name: 'bomb',
+        image: "image1",
+        smallImage: "image2",
+        description: "it makes things go boom!",
+        uuid: uuid["new"](),
+        empty: false
       }
     ];
     vm.setCurrentRoutine = function(routine) {
@@ -134,6 +143,14 @@
     };
 
     /* Weapon */
+    vm.mainweapon = {
+      name: 'gun',
+      image: "image1",
+      smallImage: "image2",
+      description: "it shoots things",
+      uuid: uuid["new"](),
+      empty: false
+    };
     wepRotation = Math.floor(0 * 180);
     weapon_rotation = wepRotation;
     fixedWeapon_rotation = wepRotation * 2;
@@ -144,11 +161,25 @@
       wepLock = 0;
       return weaponInterval = $interval(chargeWeapon, 1000);
     };
+    currentAttack = {};
+    startWeaponLoop = function(wep, charge) {};
+    moveCurrentAttack = function() {};
     vm.fireWeapon = function() {
+      var lastItem;
       $interval.cancel(weaponInterval);
-      wepRotation = 0;
       wepLock = 1;
-      return updateWepRotain(wepRotation);
+      updateWepRotain(wepRotation);
+      lastItem = vm.loadedRoutines.length(-1);
+      if (vm.loadedRoutines[lastItem].empty) {
+        startWeaponLoop(vm.mainweapon, wepRotation);
+      } else {
+        startWeaponLoop(vm.loadedRoutines[lastItem], wepRotation);
+        vm.loadedRoutines.splice(0, lastItem);
+        vm.loadedRoutines.splice(0, 0, {
+          empty: true
+        });
+      }
+      return wepRotation = 0;
     };
     updateWepRotain = function(rot) {
       weapon_rotation = rot;
@@ -164,6 +195,15 @@
           wepRotation = 0;
         }
         return updateWepRotain(wepRotation);
+      }
+    };
+    vm.getCurrentWeaponImage = function() {
+      var routineLength;
+      routineLength = vm.loadedRoutines.length - 1;
+      if (vm.loadedRoutines[routineLength].empty) {
+        return vm.mainweapon.smallImage;
+      } else {
+        return vm.loadedRoutines[routineLength].smallImage;
       }
     };
     vm.getWeaponFillStyle = function() {
@@ -210,11 +250,19 @@
     return vm.openItemSelector = function() {
       var alert;
       if (rotationlock === 1) {
-        vm.loadedRoutines = [];
+        vm.loadedRoutines = [
+          {
+            empty: true
+          }, {
+            empty: true
+          }, {
+            empty: true
+          }
+        ];
         alert = {
           title: 'Attention',
           templateUrl: 'views/cardSelection.html',
-          scope: $scope,
+          scope: vm,
           preserveScope: true,
           ok: 'submit'
         };
